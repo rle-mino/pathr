@@ -11,7 +11,7 @@
     "autocompletion",
     "file",
     "import",
-    "require",
+    "require"
   ],
   "repository": "https://github.com/rle-mino/pathr",
   "license": "MIT",
