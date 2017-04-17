@@ -1,5 +1,7 @@
 # pathr package
 
-A short description of your package.
+An atom package to auto complete *JS IMPORT* (for now)
 
-![A screenshot of your package](https://f.cloud.github.com/assets/69169/2290250/c35d867a-a017-11e3-86be-cd7c5bf3ff9b.gif)
+it uses the buffered file PATH
+
+![pathr](https://cloud.githubusercontent.com/assets/15014965/25098125/b15d0880-23a7-11e7-9df2-ca3dd5b53f14.gif)
