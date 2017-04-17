@@ -1,6 +1,6 @@
 'use babel';
 
-import Pathr from '../lib/pathr';
+import Pathr from '../lib/main';
 
 // Use the command `window:run-package-specs` (cmd-alt-ctrl-p) to run specs.
 //
