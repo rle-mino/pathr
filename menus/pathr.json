@@ -1,0 +1,22 @@
+{
+  "context-menu": {
+    "atom-text-editor": [
+      {
+        "label": "Toggle pather",
+        "command": "pather:toggle"
+      }
+    ]
+  },
+  "menu": [
+    {
+      "label": "Packages",
+      "submenu": [
+        {
+          "label": "pathr",
+          "submenu": [
+          ]
+        }
+      ]
+    }
+  ]
+}
