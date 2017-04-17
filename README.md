@@ -1,6 +1,6 @@
 # pathR package
 
-An atom package to auto complete *JS IMPORT* (for now)
+An atom package to auto complete **JS IMPORT** (for now)
 
 it uses the buffered file PATH
 
