@@ -2,9 +2,18 @@
   "name": "pathr",
   "main": "./lib/main",
   "version": "0.0.0",
-  "description": "A short description of your package",
-  "keywords": [],
-  "repository": "https://github.com/atom/pathr",
+  "author": "rle-mino",
+  "description": "A package to auto complete JS IMPORT",
+  "keywords": [
+    "atom",
+    "path",
+    "autocomplete",
+    "autocompletion",
+    "file",
+    "import",
+    "require",
+  ],
+  "repository": "https://github.com/rle-mino/pathr",
   "license": "MIT",
   "engines": {
     "atom": ">=1.0.0 <2.0.0"
