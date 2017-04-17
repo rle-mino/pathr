@@ -1,4 +1,4 @@
-# pathr package
+# pathR package
 
 An atom package to auto complete *JS IMPORT* (for now)
 
