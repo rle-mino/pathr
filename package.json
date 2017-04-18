@@ -3,7 +3,7 @@
   "main": "./lib/main",
   "version": "0.5.0",
   "author": "rle-mino",
-  "description": "A package to auto complete JS IMPORT",
+  "description": "Path completion and manipulation",
   "keywords": [
     "atom",
     "path",
