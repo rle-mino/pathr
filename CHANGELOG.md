@@ -12,6 +12,6 @@
 ## 0.4.0 - Welcome require
 * add support for `require`
 
-### 0.5.0 - Root support
+## 0.5.0 - Root support
 * add support for path starting with `/`
 * now hidden files/dir/link/youKnow are hidden if the requested filename does not start with a `.`
