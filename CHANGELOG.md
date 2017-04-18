@@ -9,5 +9,5 @@
 ## 0.3.0 - Welcome double quotes
 * add double quotes support
 
-## 0.4.9 - Welcome require
+## 0.4.0 - Welcome require
 * add support for require
