@@ -15,3 +15,9 @@
 ## 0.5.0 - Root support
 * add support for path starting with `/`
 * now hidden files/dir/link/youKnow are hidden if the requested filename does not start with a `.`
+
+## 0.6.0 - Typescript
+* add typescript support
+* add JSX support
+* add TSX support
+* migrating to typescript to be more predictable

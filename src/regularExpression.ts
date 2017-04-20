@@ -1,4 +1,5 @@
 'use babel';
+
 export const withoutFilename = /(.*\/)/;
 export const insideQuotes = /['"]((\.\/)|(\.\.\/)|(\/)).*['"]/;
 export const onlyFilename = /\/[^/]*['"]/;
