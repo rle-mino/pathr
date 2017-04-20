@@ -20,4 +20,4 @@
 * add typescript support
 * add JSX support
 * add TSX support
-* migrating to typescript to be more predictable
+* migrating to typescript
