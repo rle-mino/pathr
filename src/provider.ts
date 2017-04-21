@@ -27,6 +27,10 @@ interface SuggestionParams {
   prefix:string;
 }
 
+interface FilterResult {
+  string:string;
+}
+
 class Provider {
   selector:string;
   inclusionPriority:number;
@@ -42,14 +46,12 @@ class Provider {
     this.excludeLowerPriority = false;
   }
 
-  getFilePath = (fullFilePath:string):string => fullFilePath.match(RE.withoutFilename)[0];
+  getActualFilePath = (fullFilePath:string):string => fullFilePath.match(RE.withoutFilename)[0];
+
+  getActualFilename = (fullFilePath:string):string => fullFilePath.match(RE.onlyFilename)[0];
 
   getRequestPath = (line:string):string => {
-    /*
-    * match returns an array,
-    * just get the first value in the array
-    * with the `'`
-    */
+
     const [path] = line.match(RE.insideQuotes);
 
     const withoutQuotes = path.slice(1, path.length - 1);
@@ -72,19 +74,28 @@ class Provider {
     if (stat.isSocket()) return 'socket';
   }
 
-  formatResult = (path:string) => ({ string: file }:{ string:string }):AutocompleteSuggest => {
-    const separator = path[path.length - 1] === '/' ? '' : '/';
+  removeExtension = (extension:string, actualFileExtension:string):boolean =>
+    extension === actualFileExtension;
 
-    const stat = fs.lstatSync(`${path}${separator}${file}`);
-    const type = this.getType(stat);
+  formatResult = (path:string, actualFileExtension:string) =>
+    ({ string:file }:FilterResult):AutocompleteSuggest => {
+      const separator = path[path.length - 1] === '/' ? '' : '/';
 
-    return {
-      // remove the extension
-      text: nodepath.basename(file, nodepath.extname(file)),
-      displayText: file,
-      rightLabelHTML: type,
-    };
-  }
+      const stat = fs.lstatSync(`${path}${separator}${file}`);
+      const type = this.getType(stat);
+      const extension = nodepath.extname(file);
+
+      const text = this.removeExtension(extension, actualFileExtension) ?
+        nodepath.basename(file, nodepath.extname(file))
+        :
+        file;
+
+      return {
+        text,
+        displayText: file,
+        rightLabelHTML: type,
+      };
+    }
 
   isQuote = (line:string, i:number):boolean => (
     (line[i] === '\'' || line[i] === '\"') &&
@@ -92,7 +103,7 @@ class Provider {
     line[i - 1] !== '\\'
   );
 
-  surrounded = (line:string, index:number):boolean => {
+  isSurrounded = (line:string, index:number):boolean => {
     let inside:boolean = false;
 
     for (let i = 0; i < index; i = i + 1) {
@@ -120,39 +131,39 @@ class Provider {
         !line.match(RE.requ)
       ) {
         resolve([]);
-      } else if (this.surrounded(line, column)) {
+      } else if (this.isSurrounded(line, column)) {
         // '[./a/b/c/d/]couou'
-        const requestPath = this.getRequestPath(line);
+        const path = this.getRequestPath(line);
 
         // './a/b/c/d/[couou]'
-        const requestString = this.getRequestString(line);
+        const filename = this.getRequestString(line);
 
-        // path to buffered file
-        const filePath = this.getFilePath(fullFilePath);
+        const actualFilePath = this.getActualFilePath(fullFilePath);
 
-        const separator = filePath[filePath.length - 1] === '/' ? '' : '/';
+        const actualFileExtension = nodepath.extname(fullFilePath);
+
+        const separator = actualFilePath[actualFilePath.length - 1] === '/' ? '' : '/';
 
         const searchPath:string =
-          requestPath[0] === '/' ?
-            requestPath
+          path[0] === '/' ?
+            path
             :
-            `${filePath}${separator}${requestPath}`;
+            `${actualFilePath}${separator}${path}`;
 
-        // use async readdir to make sure we don't block the main process
         fs.readdir(searchPath, (err, files) => {
           if (err) {
             resolve([]);
             return console.error(err);
           }
 
-          if (requestString[0] !== '.') {
-            files = files.filter(file => file[0] !== '.');
+          let validFiles:string[] = files;
+          if (filename[0] !== '.') {
+            validFiles = files.filter(file => file[0] !== '.');
           }
 
-          const results = fuzzy.filter(requestString, files);
+          const results = fuzzy.filter(filename, files);
 
-          // use fuzzy to get wider results
-          const suggestions = results.map(this.formatResult(searchPath));
+          const suggestions = results.map(this.formatResult(searchPath, actualFileExtension));
 
           resolve(suggestions);
         });

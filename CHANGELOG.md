@@ -21,3 +21,6 @@
 * add JSX support
 * add TSX support
 * migrating to typescript
+
+## 0.7.0 - Extension
+* keep file extension if she is different from the actual one
