@@ -5,30 +5,13 @@ import * as fs from 'fs';
 import * as fuzzy from 'fuzzy';
 import * as nodepath from 'path';
 import * as RE from './regularExpression';
-
-interface Point {
-  column:number;
-  row:number;
-}
-
-interface File {
-  path:string;
-}
-
-interface AutocompleteSuggest {
-  text:string;
-  displayText:string;
-  rightLabelHTML:string;
-}
-
-interface SuggestionParams {
-  editor:any;
-  bufferPosition:Point;
-}
-
-interface FilterResult {
-  string:string;
-}
+import {
+  Point,
+  File,
+  AutocompleteSuggest,
+  SuggestionParams,
+  FilterResult,
+} from './interfaces';
 
 class Provider {
   selector:string;
@@ -39,7 +22,7 @@ class Provider {
   constructor() {
 
     // autocomplete+
-    this.selector = '.source.js, .source.jsx, .source.ts, .source.tsx';
+    this.selector = '*';
     this.inclusionPriority = 1;
     this.suggestionPriority = 2;
     this.excludeLowerPriority = false;
@@ -123,11 +106,7 @@ class Provider {
       } = editor.getBuffer();
       const line = lines[row];
 
-      if (
-        !line.match(RE.importFrom) &&
-        !line.match(RE.requ) &&
-        !line.match(RE.importO)
-      ) {
+      if (!line.match(RE.everywhere)) {
         resolve([]);
       } else if (this.isSurrounded(line, column)) {
         // import foo from '[./a/b/c/d/]bar'
@@ -150,7 +129,6 @@ class Provider {
         fs.readdir(searchPath, (err, files) => {
           if (err) {
             resolve([]);
-            return console.error(err);
           }
 
           let validFiles:string[] = files;
@@ -158,7 +136,7 @@ class Provider {
             validFiles = files.filter(file => file[0] !== '.');
           }
 
-          const results = fuzzy.filter(filename, files);
+          const results = fuzzy.filter(filename, validFiles);
 
           const suggestions = results.map(this.formatResult(searchPath, actualFileExtension));
 
