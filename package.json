@@ -15,7 +15,9 @@
   ],
   "scripts": {
     "build:prod": "tsc",
-    "build:watch": "tsc --watch --pretty"
+    "build:watch": "tsc --watch --pretty",
+    "test:prod": "jest",
+    "test:watch": "jest --watch --verbose"
   },
   "repository": "https://github.com/rle-mino/pathr",
   "license": "MIT",
@@ -23,9 +25,7 @@
     "atom": ">=1.0.0 <2.0.0"
   },
   "dependencies": {
-    "fuzzy": "^0.1.3",
-    "tslint-config-airbnb": "^1.1.1",
-    "typescript": "^2.2.2"
+    "fuzzy": "^0.1.3"
   },
   "providedServices": {
     "autocomplete.provider": {
@@ -36,6 +36,23 @@
   },
   "devDependencies": {
     "@types/node": "^7.0.13",
-    "tslint-config-airbnb": "^1.1.1"
+    "babel-preset-es2015": "^6.24.1",
+    "expect": "^1.20.2",
+    "jest": "^19.0.2",
+    "babel-jest": "^19.0.0",
+    "tslint-config-airbnb": "^1.1.1",
+    "tslint-config-airbnb": "^1.1.1",
+    "typescript": "^2.2.2"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {
+      ".*": "./node_modules/babel-jest"
+    }
+  },
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
   }
 }

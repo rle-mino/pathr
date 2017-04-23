@@ -24,7 +24,6 @@ interface AutocompleteSuggest {
 interface SuggestionParams {
   editor:any;
   bufferPosition:Point;
-  prefix:string;
 }
 
 interface FilterResult {
@@ -114,7 +113,7 @@ class Provider {
     return inside;
   }
 
-  getSuggestions = ({ editor, bufferPosition: { row, column }, prefix }:SuggestionParams) => {
+  getSuggestions = ({ editor, bufferPosition: { row, column } }:SuggestionParams) => {
 
     return new Promise((resolve, reject) => {
       const {
@@ -128,7 +127,8 @@ class Provider {
 
       if (
         !line.match(RE.importFrom) &&
-        !line.match(RE.requ)
+        !line.match(RE.requ) &&
+        !line.match(RE.importO)
       ) {
         resolve([]);
       } else if (this.isSurrounded(line, column)) {
@@ -149,7 +149,6 @@ class Provider {
             path
             :
             `${actualFilePath}${separator}${path}`;
-
         fs.readdir(searchPath, (err, files) => {
           if (err) {
             resolve([]);

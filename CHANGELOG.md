@@ -24,3 +24,6 @@
 
 ## 0.7.0 - Extension
 * keep file extension if she is different from the actual one
+
+## 0.8.0 - import
+* add support for unnamed import
