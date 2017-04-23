@@ -20,20 +20,21 @@ describe('Pathr', () => {
           ],
           file: {
             path: actual,
-          }
+          },
         }),
       },
       bufferPosition: {
         row: 0,
         column: 0,
       },
-    }
+    };
+
     provider.getSuggestions(params)
       .then((results) => {
-        expect(results).toEqual([])
-        done()
-      })
-  })
+        expect(results).toEqual([]);
+        done();
+      });
+  });
 
   it('from \'./', (done) => {
     const params = {
@@ -51,29 +52,29 @@ describe('Pathr', () => {
         row: 0,
         column: 15,
       },
-    }
+    };
     provider.getSuggestions(params)
       .then((results) => {
         expect(results).toEqual([
           {
-            "displayText": "pathr-regex.test.js",
-            "rightLabelHTML": "file",
-            "text": "pathr-regex.test",
+            displayText: 'pathr-core.test.js',
+            rightLabelHTML: 'file',
+            text: 'pathr-core.test',
           },
           {
-            "displayText": "pathr-spec.test.js",
-            "rightLabelHTML": "file",
-            "text": "pathr-spec.test",
+            displayText: 'pathr-spec.test.js',
+            rightLabelHTML: 'file',
+            text: 'pathr-spec.test',
           },
           {
-            "displayText": "pathr-view-spec.js",
-            "rightLabelHTML": "file",
-            "text": "pathr-view-spec",
-          }]
-        )
-        done()
-      })
-  })
+            displayText: 'pathr-view-spec.js',
+            rightLabelHTML: 'file',
+            text: 'pathr-view-spec',
+          }],
+        );
+        done();
+      });
+  });
 
   it('from \'../', (done) => {
     const params = {
@@ -91,13 +92,13 @@ describe('Pathr', () => {
         row: 0,
         column: 15,
       },
-    }
+    };
     provider.getSuggestions(params)
       .then((results) => {
-        expect(results.length).toBeGreaterThan(0)
-        done()
-      })
-  })
+        expect(results.length).toBeGreaterThan(0);
+        done();
+      });
+  });
 
   it('from \'/', (done) => {
     const params = {
@@ -115,12 +116,11 @@ describe('Pathr', () => {
         row: 0,
         column: 15,
       },
-    }
+    };
     provider.getSuggestions(params)
       .then((results) => {
-        expect(results.length).toBeGreaterThan(0)
-        done()
-      })
-  })
-
+        expect(results.length).toBeGreaterThan(0);
+        done();
+      });
+  });
 });

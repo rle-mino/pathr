@@ -47,8 +47,6 @@ class Provider {
 
   getActualFilePath = (fullFilePath:string):string => fullFilePath.match(RE.withoutFilename)[0];
 
-  getActualFilename = (fullFilePath:string):string => fullFilePath.match(RE.onlyFilename)[0];
-
   getRequestPath = (line:string):string => {
 
     const [path] = line.match(RE.insideQuotes);
@@ -96,10 +94,10 @@ class Provider {
       };
     }
 
-  isQuote = (line:string, i:number):boolean => (
-    (line[i] === '\'' || line[i] === '\"') &&
-    i - 1 >= 0 &&
-    line[i - 1] !== '\\'
+  isQuote = (line:string, index:number):boolean => (
+    (line[index] === '\'' || line[index] === '\"') &&
+    index - 1 >= 0 &&
+    line[index - 1] !== '\\'
   );
 
   isSurrounded = (line:string, index:number):boolean => {
@@ -132,10 +130,10 @@ class Provider {
       ) {
         resolve([]);
       } else if (this.isSurrounded(line, column)) {
-        // '[./a/b/c/d/]couou'
+        // import foo from '[./a/b/c/d/]bar'
         const path = this.getRequestPath(line);
 
-        // './a/b/c/d/[couou]'
+        // './a/b/c/d/[bar]'
         const filename = this.getRequestString(line);
 
         const actualFilePath = this.getActualFilePath(fullFilePath);

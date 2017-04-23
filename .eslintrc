@@ -1,0 +1,10 @@
+{
+    "defaultSeverity": "error",
+    "extends": ["airbnb/base"],
+    "jsRules": {},
+    "rules": {},
+    "env": {
+      "jest": true
+    },
+    "rulesDirectory": []
+}
