@@ -128,7 +128,7 @@ class Provider {
             `${actualFilePath}${separator}${path}`;
         fs.readdir(searchPath, (err, files) => {
           if (err) {
-            resolve([]);
+            return resolve([]);
           }
 
           let validFiles:string[] = files;

@@ -27,3 +27,7 @@
 
 ## 0.8.0 - import
 * add support for unnamed import
+
+## 1.0.0 - Everywhere
+* works everywhere, all you have to do is typing `./` || `../` || `/` on any file type
+* Few unit-tests are now available
