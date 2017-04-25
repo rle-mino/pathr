@@ -127,7 +127,7 @@ class Provider {
             :
             `${actualFilePath}${separator}${path}`;
         fs.readdir(searchPath, (err, files) => {
-          if (err) {
+          if (err || !files) {
             return resolve([]);
           }
 

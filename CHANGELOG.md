@@ -31,3 +31,6 @@
 ## 1.0.0 - Everywhere
 * works everywhere, all you have to do is typing `./` || `../` || `/` on any file type
 * Few unit-tests are now available
+
+## 1.0.1 - add security for empty folder
+* if the requested folder is empty, the error is correctly handled

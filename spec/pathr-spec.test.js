@@ -123,4 +123,28 @@ describe('Pathr', () => {
         done();
       });
   });
+
+  it('should work even if the folder does not exists', (done) => {
+    const params = {
+      editor: {
+        getBuffer: () => ({
+          lines: [
+            'import a from \'./foo/bar\'',
+          ],
+          file: {
+            path: actual,
+          },
+        }),
+      },
+      bufferPosition: {
+        row: 0,
+        column: 15,
+      },
+    };
+    provider.getSuggestions(params)
+      .then((results) => {
+        expect(results.length).toEqual(0);
+        done();
+      });
+  });
 });
