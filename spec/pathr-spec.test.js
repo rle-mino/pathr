@@ -13,15 +13,15 @@ describe('Pathr', () => {
   it('should return an empty array if it is not a known pattern', (done) => {
     const params = {
       editor: {
-        getBuffer: () => ({
-          lines: [
+        buffer: {
+          getLines: () => [
             'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod',
             'Lorem ipsum dolor consectetur adipisicing elit, sed do eiusmod sit amet',
           ],
           file: {
             path: actual,
           },
-        }),
+        },
       },
       bufferPosition: {
         row: 0,
@@ -39,14 +39,14 @@ describe('Pathr', () => {
   it('from \'./', (done) => {
     const params = {
       editor: {
-        getBuffer: () => ({
-          lines: [
+        buffer: {
+          getLines: () => [
             'import a from \'./\'',
           ],
           file: {
             path: actual,
           },
-        }),
+        },
       },
       bufferPosition: {
         row: 0,
@@ -65,11 +65,6 @@ describe('Pathr', () => {
             displayText: 'pathr-spec.test.js',
             rightLabelHTML: 'file',
             text: 'pathr-spec.test',
-          },
-          {
-            displayText: 'pathr-view-spec.js',
-            rightLabelHTML: 'file',
-            text: 'pathr-view-spec',
           }],
         );
         done();
@@ -79,14 +74,14 @@ describe('Pathr', () => {
   it('from \'../', (done) => {
     const params = {
       editor: {
-        getBuffer: () => ({
-          lines: [
+        buffer: {
+          getLines: () => [
             'import a from \'../\'',
           ],
           file: {
             path: actual,
           },
-        }),
+        },
       },
       bufferPosition: {
         row: 0,
@@ -103,8 +98,8 @@ describe('Pathr', () => {
   it('from \'/', (done) => {
     const params = {
       editor: {
-        getBuffer: () => ({
-          lines: [
+        buffer: ({
+          getLines: () => [
             'import a from \'/\'',
           ],
           file: {
@@ -127,14 +122,14 @@ describe('Pathr', () => {
   it('should work even if the folder does not exists', (done) => {
     const params = {
       editor: {
-        getBuffer: () => ({
-          lines: [
+        buffer: {
+          getLines: () => [
             'import a from \'./foo/bar\'',
           ],
           file: {
             path: actual,
           },
-        }),
+        },
       },
       bufferPosition: {
         row: 0,
@@ -145,6 +140,7 @@ describe('Pathr', () => {
       .then((results) => {
         expect(results.length).toEqual(0);
         done();
-      });
+      })
+      .catch(console.log);
   });
 });

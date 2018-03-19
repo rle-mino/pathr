@@ -9,38 +9,38 @@ import provider from '../lib/provider';
 // or `fdescribe`). Remove the `f` to unfocus the block.
 
 describe('core functions', () => {
-  describe('getActualFilePath', () => {
-    it('should remove filename from a path', () => {
-      expect(provider.getActualFilePath('../foo/bar/foo/bar.js'))
-        .toEqual('../foo/bar/foo/');
-    });
-  });
+  // describe('getActualFilePath', () => {
+  //   it('should remove filename from a path', () => {
+  //     expect(provider.getActualFilePath('../foo/bar/foo/bar.js'))
+  //       .toEqual('../foo/bar/foo/');
+  //   });
+  // });
 
-  describe('getRequestPath', () => {
-    it('should getRequestPath', () => {
-      expect(provider.getRequestPath('import a from \'./foo/bar/ok.ts\''))
-        .toEqual('./foo/bar/');
-    });
-  });
+  // describe('getRequestPath', () => {
+  //   it('should getRequestPath', () => {
+  //     expect(provider.getRequestPath('import a from \'./foo/bar/ok.ts\''))
+  //       .toEqual('./foo/bar/');
+  //   });
+  // });
 
-  describe('getRequestString', () => {
-    it('should getRequestString', () => {
-      expect(provider.getRequestString('import a from \'./foo/bar.ts\''))
-        .toEqual('bar.ts');
-    });
-  });
+  // describe('getRequestString', () => {
+  //   it('should getRequestString', () => {
+  //     expect(provider.getRequestString('import a from \'./foo/bar.ts\''))
+  //       .toEqual('bar.ts');
+  //   });
+  // });
 
-  describe('removeExtension', () => {
-    it('should return true if both extensions are the same', () => {
-      expect(provider.removeExtension('.ts', '.ts'))
-        .toEqual(true);
-    });
-
-    it('should return false if extensions are different', () => {
-      expect(provider.removeExtension('.js', '.ts'))
-        .toEqual(false);
-    });
-  });
+  // describe('removeExtension', () => {
+  //   it('should return true if both extensions are the same', () => {
+  //     expect(provider.removeExtension('.ts', '.ts'))
+  //       .toEqual(true);
+  //   });
+  // 
+  //   it('should return false if extensions are different', () => {
+  //     expect(provider.removeExtension('.js', '.ts'))
+  //       .toEqual(false);
+  //   });
+  // });
 
   describe('formatResult', () => {
     it('should return the autocomplete+ format object of a file', () => {

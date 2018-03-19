@@ -3,8 +3,9 @@
 
 import * as fs from 'fs';
 import * as fuzzy from 'fuzzy';
-import * as nodepath from 'path';
+import * as path from 'path';
 import * as RE from './regularExpression';
+
 import {
   Point,
   File,
@@ -28,22 +29,6 @@ class Provider {
     this.excludeLowerPriority = false;
   }
 
-  getActualFilePath = (fullFilePath:string):string => fullFilePath.match(RE.withoutFilename)[0];
-
-  getRequestPath = (line:string):string => {
-
-    const [path] = line.match(RE.insideQuotes);
-
-    const withoutQuotes = path.slice(1, path.length - 1);
-
-    return withoutQuotes.match(RE.withoutFilename)[0];
-  }
-
-  getRequestString = (line:string):string => {
-    const request = line.match(RE.onlyFilename)[0];
-    return request.slice(1, request.length - 1);
-  }
-
   getType = (stat:fs.Stats):string => {
     if (stat.isFile()) return 'file';
     if (stat.isDirectory()) return 'directory';
@@ -54,21 +39,18 @@ class Provider {
     if (stat.isSocket()) return 'socket';
   }
 
-  removeExtension = (extension:string, actualFileExtension:string):boolean =>
+  isTheExtensionRemovable = (extension:string, actualFileExtension:string):boolean =>
     extension === actualFileExtension;
 
-  formatResult = (path:string, actualFileExtension:string) =>
+  formatResult = (dirname:string, actualFileExtension:string) =>
     ({ string:file }:FilterResult):AutocompleteSuggest => {
-      const separator = path[path.length - 1] === '/' ? '' : '/';
-
-      const stat = fs.lstatSync(`${path}${separator}${file}`);
+      const stat = fs.lstatSync(path.resolve(dirname, file));
       const type = this.getType(stat);
-      const extension = nodepath.extname(file);
+      const extension = path.extname(file);
 
-      const text = this.removeExtension(extension, actualFileExtension) ?
-        nodepath.basename(file, nodepath.extname(file))
-        :
-        file;
+      const text = this.isTheExtensionRemovable(extension, actualFileExtension)
+        ? path.basename(file, path.extname(file))
+        : file;
 
       return {
         text,
@@ -78,9 +60,9 @@ class Provider {
     }
 
   isQuote = (line:string, index:number):boolean => (
-    (line[index] === '\'' || line[index] === '\"') &&
-    index - 1 >= 0 &&
-    line[index - 1] !== '\\'
+    (line[index] === '\'' || line[index] === '\"')
+    && index - 1 >= 0
+    && line[index - 1] !== '\\'
   );
 
   isSurrounded = (line:string, index:number):boolean => {
@@ -94,57 +76,72 @@ class Provider {
     return inside;
   }
 
-  getSuggestions = ({ editor, bufferPosition: { row, column } }:SuggestionParams) => {
+  getSuggestions = ({ editor, bufferPosition }) => new Promise((resolve, reject) => {
+    const { row, column } = bufferPosition;
+    const lines = editor.buffer.getLines();
+    const line = lines[row];
+    const fullFilePath = editor.buffer.file.path;
 
-    return new Promise((resolve, reject) => {
-      const {
-        lines,
-        file: { path: fullFilePath },
-      }:{
-        lines:[string],
-        file:File,
-      } = editor.getBuffer();
-      const line = lines[row];
+    // If it's not an import statement
+    // we resolve an empty array
+    // which means that we don't have anything
+    // to suggest
+    if (!line.match(RE.looksLikeAnImportStatement)) {
+      return resolve([]);
+    // If we are inside a pair of quotes
+    // and inside an import statement
+    // means that we should look for
+    // suggestions
+    } else if (this.isSurrounded(line, column)) {
+      // We extract the text inside quotes
+      const [textInsideQuotes] = line.match(RE.insideQuotes);
+      // ... and remove the quotes
+      const textWithoutQuotes = textInsideQuotes.slice(1, textInsideQuotes.length - 1);
+      // then we use this text to get the dirname
+      const dirname = path.dirname(textWithoutQuotes);
+      // ... and the filename.
+      const filename = path.basename(textWithoutQuotes);
+      // We do the exact same thing for
+      // the actual file since we need to
+      // know where we are for relative import ('./' '../')
+      const actualFileDir = path.dirname(fullFilePath);
+      // ...and the file extension to know
+      // if we should remove the extension.
+      // If it's a .ts file, we don't want to import './foo.ts' but './foo'
+      const actualFileExtension = path.extname(fullFilePath);
+      // If the dirname starts with a `/`, that's an absolute import
+      // else we append the actual file directory and the directory
+      // the use wrote
+      const searchPath:string =
+        dirname[0] === '/'
+          ? dirname
+          : path.resolve(actualFileDir, dirname);
 
-      if (!line.match(RE.everywhere)) {
-        resolve([]);
-      } else if (this.isSurrounded(line, column)) {
-        // import foo from '[./a/b/c/d/]bar'
-        const path = this.getRequestPath(line);
+      fs.readdir(searchPath, (err, files) => {
+        // In case there is any kind of error,
+        // we resolve an empty array
+        if (err || !files || files.length === 0) {
+          return resolve([]);
+        }
 
-        // './a/b/c/d/[bar]'
-        const filename = this.getRequestString(line);
+        let validFiles:string[] = files;
+        // We display hidden files ONLY if the first letter of the
+        // filename is a dot. If not, we remove all the hidden files
+        if (filename[0] !== '.') {
+          validFiles = files.filter(file => file[0] !== '.');
+        }
 
-        const actualFilePath = this.getActualFilePath(fullFilePath);
+        // We use fuzzy filter to get better results
+        const results = fuzzy.filter(filename, validFiles);
 
-        const actualFileExtension = nodepath.extname(fullFilePath);
+        const suggestions = results.map(
+          this.formatResult(searchPath, actualFileExtension),
+        );
 
-        const separator = actualFilePath[actualFilePath.length - 1] === '/' ? '' : '/';
-
-        const searchPath:string =
-          path[0] === '/' ?
-            path
-            :
-            `${actualFilePath}${separator}${path}`;
-        fs.readdir(searchPath, (err, files) => {
-          if (err || !files) {
-            return resolve([]);
-          }
-
-          let validFiles:string[] = files;
-          if (filename[0] !== '.') {
-            validFiles = files.filter(file => file[0] !== '.');
-          }
-
-          const results = fuzzy.filter(filename, validFiles);
-
-          const suggestions = results.map(this.formatResult(searchPath, actualFileExtension));
-
-          resolve(suggestions);
-        });
-      }
-    });
-  }
+        resolve(suggestions);
+      });
+    }
+  })
 }
 
 export default new Provider();
