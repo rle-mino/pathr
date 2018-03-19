@@ -1,7 +1,7 @@
 {
   "name": "pathr",
   "main": "./lib/main.js",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "rle-mino",
   "description": "Path completion and manipulation",
   "keywords": [
